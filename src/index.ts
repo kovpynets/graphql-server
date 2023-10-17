@@ -1,4 +1,9 @@
 import { ApolloServer } from '@apollo/server';
+import {
+    ApolloServerPluginLandingPageLocalDefault,
+    ApolloServerPluginLandingPageProductionDefault,
+} from '@apollo/server/plugin/landingPage/default';
+
 import { startStandaloneServer } from '@apollo/server/standalone'
 import dotenv from 'dotenv';
 dotenv.config();
@@ -35,6 +40,11 @@ const resolvers = {
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    plugins: [
+        process.env.NODE_ENV === 'production'
+            ? ApolloServerPluginLandingPageProductionDefault()
+            : ApolloServerPluginLandingPageLocalDefault({ embed: false }),
+    ],
 });
 
 const { url } = await startStandaloneServer(server, {
